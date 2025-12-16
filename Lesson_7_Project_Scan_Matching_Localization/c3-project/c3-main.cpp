@@ -207,13 +207,15 @@ int main(){
 			sor.setLeafSize (0.01f, 0.01f, 0.01f);
 			sor.filter (*cloud_filtered);
 			// TODO: Find pose transform by using ICP or NDT matching
-			//pose = ....
+			pose = Pose(Point(vehicle->GetTransform().location.x, vehicle->getTransform().location.y,vehicle->getTransform().location.z)
 
 			// TODO: Transform scan so it aligns with ego's actual pose and render that scan
-
+			Eigein::Matrix4d transform;
+			transformn =  ICP(mapCloud,cloudFiltered, pose, 0);
+			
 			viewer->removePointCloud("scan");
 			// TODO: Change `scanCloud` below to your transformed scan
-			renderPointCloud(viewer, scanCloud, "scan", Color(1,0,0) );
+			renderPointCloud(viewer, cloudFiltered, "scan", Color(1,0,0) );
 
 			viewer->removeAllShapes();
 			drawCar(pose, 1,  Color(0,1,0), 0.35, viewer);
