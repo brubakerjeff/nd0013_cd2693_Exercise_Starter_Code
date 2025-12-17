@@ -202,7 +202,7 @@ int main(){
 			new_scan = true;
 			// TODO: (Filter scan using voxel filter)
 			// Create the filtering object
-			pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
+			pcl::VoxelGrid<PointT> sor; 
 			sor.setInputCloud (scanCloud);
 			sor.setLeafSize (0.01f, 0.01f, 0.01f);
 			sor.filter (*cloud_filtered);
