@@ -269,7 +269,7 @@ int main(){
 				)
 
 			// TODO: Transform scan so it aligns with ego's actual pose and render that scan
-			Eigein::Matrix4d transform;
+			Eigen::Matrix4d transform;
 			transform =  ICP(mapCloud,cloudFiltered, pose, 0);
 			
 			viewer->removePointCloud("scan");
