@@ -262,11 +262,18 @@ int main(){
 			sor.setLeafSize (0.01f, 0.01f, 0.01f);
 			sor.filter (*cloudFiltered);
 			// TODO: Find pose transform by using ICP or NDT matching
-			pose = Pose(Point(vehicle->GetTransform().location.x, vehicle->GetTransform().location.y,vehicle->GetTransform().location.z,
-		  		Rotate(vehicle->GetTransform().rotation.yaw * pi/180,
-  		 	      vehicle->GetTransform().rotation.pitch * pi/180,
-      			   vehicle->GetTransform().rotation.roll * pi/180)
-				)
+			pose = Pose(
+			    Point(
+			        vehicle->GetTransform().location.x,
+			        vehicle->GetTransform().location.y,
+			        vehicle->GetTransform().location.z
+			    ),
+			    Rotate(
+			        vehicle->GetTransform().rotation.yaw   * pi/180,
+			        vehicle->GetTransform().rotation.pitch * pi/180,
+			        vehicle->GetTransform().rotation.roll  * pi/180
+			    )
+			);
 
 			// TODO: Transform scan so it aligns with ego's actual pose and render that scan
 			Eigen::Matrix4d transform;
