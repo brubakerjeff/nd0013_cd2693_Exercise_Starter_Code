@@ -279,6 +279,11 @@ int main(){
 			Eigen::Matrix4d transform;
 			transform =  ICP(mapCloud,cloudFiltered, pose, 0);
 			
+			
+			pose = getPose(transform);
+			pcl::transformPointCloud(*cloudFiltered, *corrected_scan, transform);
+			renderPointCloud(viewer, corrected_scan, "scan", Color(1,0,0));
+			
 			viewer->removePointCloud("scan");
 			// TODO: Change `scanCloud` below to your transformed scan
 			renderPointCloud(viewer, cloudFiltered, "scan", Color(1,0,0) );
