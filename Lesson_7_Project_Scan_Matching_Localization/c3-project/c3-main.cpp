@@ -285,7 +285,10 @@ int main(){
 
 			pose = getPose(transform);
 			pcl::transformPointCloud(*cloudFiltered, *corrected_scan, transform);
-			renderPointCloud(viewer, corrected_scan, "scan", Color(1,0,0));
+			if (!viewer->updatePointCloud(corrected_scan, "scan2"))
+			{
+			    renderPointCloud(viewer, corrected_scan, "scan2", Color(1,0,0));
+			}
 
 			viewer->removeAllShapes();
 			drawCar(pose, 1,  Color(0,1,0), 0.35, viewer);
