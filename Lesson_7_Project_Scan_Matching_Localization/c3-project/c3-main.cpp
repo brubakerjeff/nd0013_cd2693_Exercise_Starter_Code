@@ -64,7 +64,7 @@ Eigen::Matrix4d ICP(PointCloudT::Ptr target, PointCloudT::Ptr source, Pose start
   	icp.setMaximumIterations (iterations);
   	icp.setInputSource (transformSource);
   	icp.setInputTarget (target);
-	icp.setMaxCorrespondenceDistance (2);
+	icp.setMaxCorrespondenceDistance (0.05);
 	//icp.setTransformationEpsilon(0.001);
 	//icp.setEuclideanFitnessEpsilon(.05);
 	//icp.setRANSACOutlierRejectionThreshold (10);
