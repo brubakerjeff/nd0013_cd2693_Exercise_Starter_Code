@@ -259,39 +259,31 @@ int main(){
 			
 			new_scan = true;
 			// TODO: (Filter scan using voxel filter)
-			// Create the filtering object
-			pcl::VoxelGrid<PointT> sor; 
-			sor.setInputCloud (scanCloud);
-			sor.setLeafSize(0.2f, 0.2f, 0.2f);
-			sor.filter (*cloudFiltered);
-			// TODO: Find pose transform by using ICP or NDT matching
-			pose = Pose(
-			    Point(
-			        vehicle->GetTransform().location.x,
-			        vehicle->GetTransform().location.y,
-			        vehicle->GetTransform().location.z
-			    ),
-			    Rotate(
-			        vehicle->GetTransform().rotation.yaw   * pi/180,
-			        vehicle->GetTransform().rotation.pitch * pi/180,
-			        vehicle->GetTransform().rotation.roll  * pi/180
-			    )
-			);
-
-			// TODO: Transform scan so it aligns with ego's actual pose and render that scan
-			Eigen::Matrix4d transform;
-			transform = ICP(mapCloud, cloudFiltered, pose, 50);
+          	pcl::VoxelGrid<PointT> vg;
+  			vg.setInputCloud(scanCloud);
+			double filterRes = 0.5;
+  			vg.setLeafSize(filterRes, filterRes, filterRes);
+			typename pcl::PointCloud<PointT>::Ptr cloudFiltered (new pcl::PointCloud<PointT>);
+  			vg.filter(*cloudFiltered);
 			
-			pcl::PointCloud<pcl::PointXYZ>::Ptr corrected_scan(
-			    new pcl::PointCloud<pcl::PointXYZ>
-			);
-
-			pose = getPose(transform);
-			pcl::transformPointCloud(*cloudFiltered, *corrected_scan, transform);
-			if (!viewer->updatePointCloud(corrected_scan, "scan2"))
-			{
-			    renderPointCloud(viewer, corrected_scan, "scan2", Color(1,0,0));
-			}
+          	// TODO: Find pose transform by using ICP or NDT matching	
+         	pose = Pose(Point(vehicle->GetTransform().location.x, vehicle->GetTransform().location.y, vehicle->GetTransform().location.z), Rotate(vehicle->GetTransform().rotation.yaw * pi/180, vehicle->GetTransform().rotation.pitch * pi/180, vehicle->GetTransform().rotation.roll * pi/180)) - poseRef;
+          	
+            Eigen::Matrix4d transform;              
+			
+			transform = ICP(mapCloud, cloudFiltered, pose, 0);
+           
+            
+        	pose = getPose(transform);
+            
+            // TODO: Transform scan so it aligns with ego's actual pose and render that scan
+			
+			PointCloudT::Ptr corrected_scan (new PointCloudT);
+			pcl::transformPointCloud (*cloudFiltered, *corrected_scan, transform);
+			viewer->removePointCloud("scan");
+          
+            // TODO: Change `scanCloud` below to your transformed scan
+			renderPointCloud(viewer, corrected_scan, "scan", Color(1,0,0) );
 
 			viewer->removeAllShapes();
 			drawCar(pose, 1,  Color(0,1,0), 0.35, viewer);
