@@ -61,10 +61,13 @@ Eigen::Matrix4d ICP(PointCloudT::Ptr target, PointCloudT::Ptr source, Pose start
 	pcl::console::TicToc time;
   	time.tic ();
   	pcl::IterativeClosestPoint<PointT, PointT> icp;
-  	icp.setMaximumIterations (iterations);
-  	icp.setInputSource (transformSource);
-  	icp.setInputTarget (target);
-	icp.setMaxCorrespondenceDistance (0.05);
+	icp.setMaximumIterations(50);
+	icp.setMaxCorrespondenceDistance(1.5);
+	icp.setTransformationEpsilon(1e-8);
+	icp.setEuclideanFitnessEpsilon(1e-6);
+	icp.setInputSource(transformSource);
+	icp.setInputTarget(target);
+
 	//icp.setTransformationEpsilon(0.001);
 	//icp.setEuclideanFitnessEpsilon(.05);
 	//icp.setRANSACOutlierRejectionThreshold (10);
@@ -259,7 +262,7 @@ int main(){
 			// Create the filtering object
 			pcl::VoxelGrid<PointT> sor; 
 			sor.setInputCloud (scanCloud);
-			sor.setLeafSize (1.0f, 1.0f, 1.0f);
+			sor.setLeafSize(0.2f, 0.2f, 0.2f);
 			sor.filter (*cloudFiltered);
 			// TODO: Find pose transform by using ICP or NDT matching
 			pose = Pose(
@@ -277,7 +280,7 @@ int main(){
 
 			// TODO: Transform scan so it aligns with ego's actual pose and render that scan
 			Eigen::Matrix4d transform;
-			transform =  ICP(mapCloud,cloudFiltered, pose, 0);
+			transform = ICP(mapCloud, cloudFiltered, pose, 50);
 			
 			pcl::PointCloud<pcl::PointXYZ>::Ptr corrected_scan(
 			    new pcl::PointCloud<pcl::PointXYZ>
